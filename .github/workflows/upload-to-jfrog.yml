@@ -1,0 +1,32 @@
+# .github/workflows/upload-to-jfrog.yml
+
+name: Upload Artifact to JFrog Artifactory
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  upload-artifact:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create a dummy artifact
+        run: echo "My artifact content" > artifact.txt
+
+      - name: Setup JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v4
+        env:
+          JF_URL: ${{ secrets.JFROG_URL }}
+          JF_USER: ${{ secrets.JFROG_USER }}
+          JF_TOKEN: ${{ secrets.JFROG_TOKEN }}
+        with:
+          server-id: my-jfrog-server 
+
+      - name: Upload artifact
+        run: |
+          # IMPORTANT: Change "my-generic-local" to your repository name in Artifactory
+          jf rt u "artifact.txt" "amrutha-githubactions-local/"
