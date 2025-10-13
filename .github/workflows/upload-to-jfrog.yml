@@ -17,14 +17,14 @@ jobs:
       - name: Create a dummy artifact
         run: echo "My artifact content" > artifact.txt
 
-      - name: Setup JFrog CLI
+     - name: Setup JFrog CLI
         uses: jfrog/setup-jfrog-cli@v4
         env:
           JF_URL: ${{ secrets.JFROG_URL }}
           JF_USER: ${{ secrets.JFROG_USER }}
-          JF_TOKEN: ${{ secrets.JFROG_TOKEN }}
+          JF_ACCESS_TOKEN: ${{ secrets.JFROG_TOKEN }} # <-- Correct variable name
         with:
-          server-id: my-jfrog-server 
+          custom-server-id: my-jfrog-server # <-- Correct input name
 
       - name: Upload artifact
         run: |
