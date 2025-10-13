@@ -14,19 +14,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create a dummy artifact
+      - name: Create an artifact to upload
         run: echo "My artifact content" > artifact.txt
 
-     - name: Setup JFrog CLI
+      - name: Setup JFrog CLI
         uses: jfrog/setup-jfrog-cli@v4
         env:
           JF_URL: ${{ secrets.JFROG_URL }}
           JF_USER: ${{ secrets.JFROG_USER }}
-          JF_ACCESS_TOKEN: ${{ secrets.JFROG_TOKEN }} # <-- Correct variable name
+          JF_ACCESS_TOKEN: ${{ secrets.JFROG_TOKEN }}
         with:
-          custom-server-id: my-jfrog-server # <-- Correct input name
+          custom-server-id: my-jfrog-server
 
       - name: Upload artifact
         run: |
-          # IMPORTANT: Change "my-generic-local" to your repository name in Artifactory
-          jf rt u "test-migration.txt" "amrutha-githubactions-generic-local/"
+          # This now correctly uploads the "artifact.txt" file created in the step above
+          jf rt u "artifact.txt" "amrutha-githubactions-generic-local/"
