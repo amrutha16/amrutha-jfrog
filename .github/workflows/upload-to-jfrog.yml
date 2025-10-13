@@ -29,4 +29,4 @@ jobs:
       - name: Upload artifact
         run: |
           # IMPORTANT: Change "my-generic-local" to your repository name in Artifactory
-          jf rt u "artifact.txt" "amrutha-githubactions-local/"
+          jf rt u "test-migration.txt" "amrutha-githubactions-generic-local/"
