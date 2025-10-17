@@ -1,0 +1,36 @@
+name: Build and Push Docker Image to JFrog
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push-docker:
+    runs-on: ubuntu-latest
+    
+    steps:
+      ## 1. Checks out your repository code, including the Dockerfile
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      ## 2. Sets up and configures the JFrog CLI
+      - name: Setup JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v4
+        env:
+          JF_URL: ${{ secrets.JFROG_URL }}
+          JF_USER: ${{ secrets.JFROG_USER }}
+          JF_ACCESS_TOKEN: ${{ secrets.JFROG_TOKEN }}
+        with:
+          custom-server-id: my-jfrog-server
+
+      ## 3. Build and Push the Docker image to your Artifactory LOCAL repository
+      - name: Build and Push Docker Image
+        run: |
+          # The image tag must be in the format: <artifactory-url>/<repo-name>/<image-name>:<tag>
+          JFROG_DOCKER_REGISTRY=$(echo "${{ secrets.JFROG_URL }}" | sed 's|https?://||' | sed 's|/artifactory||')
+          IMAGE_TAG="${JFROG_DOCKER_REGISTRY}/amrutha-docker-local/my-app:${{ github.run_id }}"
+
+          # This single command builds the image from your Dockerfile and pushes it
+          jf rt docker-push "${IMAGE_TAG}" amrutha-docker-local \
+            --build-name="my-docker-build" \
+            --build-number=${{ github.run_id }}
